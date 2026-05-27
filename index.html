@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VetFractureAI — Femoral Shaft Fracture Detection</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=DM+Mono:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- NAV -->
+    <nav class="nav">
+      <div style="display: flex; align-items: center; gap: 12px">
+        <div class="nav-logo-icon">🦴</div>
+        <span class="nav-logo">VetFracture<span>AI</span></span>
+        <span class="nav-badge">Research</span>
+      </div>
+      <div class="nav-right">
+        <span class="nav-status-dot"></span>
+        <span>AI Model Ready</span>
+      </div>
+    </nav>
+
+    <!-- HERO -->
+    <div class="hero">
+      <div class="hero-bg"></div>
+      <div class="hero-grid"></div>
+      <div class="hero-eye">Veterinary Radiology · Deep Learning</div>
+      <h1>Femoral Shaft<br /><strong>Fracture Detection</strong></h1>
+      <p>
+        Upload a veterinary X-ray and get instant AI-powered AO/OTA fracture
+        classification using Faster R-CNN.
+      </p>
+      <div class="chips">
+        <span class="chip"
+          ><span
+            class="dot"
+            style="
+              background: #ffb830;
+              box-shadow: 0 0 6px rgba(255, 184, 48, 0.5);
+            "
+          ></span
+          >32-A Simple</span
+        >
+        <span class="chip"
+          ><span
+            class="dot"
+            style="
+              background: #ff8042;
+              box-shadow: 0 0 6px rgba(255, 128, 66, 0.5);
+            "
+          ></span
+          >32-B Wedge</span
+        >
+        <span class="chip"
+          ><span
+            class="dot"
+            style="
+              background: #ff5757;
+              box-shadow: 0 0 6px rgba(255, 87, 87, 0.5);
+            "
+          ></span
+          >32-C Complex</span
+        >
+      </div>
+    </div>
+
+    <!-- MAIN -->
+    <div class="main">
+      <!-- DISCLAIMER -->
+      <div class="disclaimer">
+        <span>⚠️</span>
+        <span
+          ><strong>Medical Disclaimer:</strong> This system is for research and
+          educational purposes only and should not replace professional
+          veterinary or medical diagnosis. Always consult a qualified
+          clinician.</span
+        >
+      </div>
+
+      <!-- DETECTION WORKSPACE -->
+      <div class="card">
+        <div class="card-title">
+          <div class="card-title-icon">
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+            >
+              <circle cx="11" cy="11" r="8" />
+              <path d="m21 21-4.35-4.35" />
+            </svg>
+          </div>
+          Detection Workspace
+        </div>
+
+        <div class="grid-2">
+          <!-- LEFT: Upload -->
+          <div>
+            <div class="section-label">Input X-Ray</div>
+            <div
+              class="upload-zone"
+              id="upload-zone"
+              onclick="document.getElementById('file-input').click()"
+            >
+              <div class="upload-hint" id="upload-hint">
+                <div class="upload-hint-icon">
+                  <svg
+                    width="22"
+                    height="22"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                  >
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                    <polyline points="17 8 12 3 7 8" />
+                    <line x1="12" y1="3" x2="12" y2="15" />
+                  </svg>
+                </div>
+                <p>Click or drag to upload</p>
+                <small>JPG · PNG · JPEG</small>
+              </div>
+              <img id="preview-img" style="display: none" alt="Preview" />
+            </div>
+            <input
+              type="file"
+              id="file-input"
+              accept="image/*"
+              onchange="onFileSelected(event)"
+            />
+
+            <div class="btn-row">
+              <button
+                class="btn btn-secondary"
+                onclick="applyClahe()"
+                id="clahe-btn"
+                disabled
+              >
+                <svg
+                  width="13"
+                  height="13"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                >
+                  <circle cx="12" cy="12" r="5" />
+                  <path
+                    d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"
+                  />
+                </svg>
+                CLAHE
+              </button>
+              <button
+                class="btn btn-primary"
+                onclick="runDetection()"
+                id="detect-btn"
+                disabled
+              >
+                <svg
+                  width="13"
+                  height="13"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                >
+                  <polygon points="5 3 19 12 5 21 5 3" />
+                </svg>
+                Detect Fractures
+              </button>
+              <button class="btn btn-danger" onclick="clearAll()">
+                <svg
+                  width="13"
+                  height="13"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                >
+                  <polyline points="3 6 5 6 21 6" />
+                  <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                  <path d="M10 11v6M14 11v6" />
+                </svg>
+              </button>
+            </div>
+            <div class="status-box" id="status-box">
+              <svg
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                style="flex-shrink: 0; opacity: 0.5"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <path d="M12 8v4M12 16h.01" />
+              </svg>
+              Upload an X-ray image to begin.
+            </div>
+          </div>
+
+          <!-- RIGHT: Result -->
+          <div>
+            <div class="section-label">Detection Output</div>
+            <div class="result-zone" id="result-zone">
+              <div class="result-placeholder">
+                <div class="result-placeholder-icon">
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                  >
+                    <rect x="3" y="3" width="18" height="18" rx="2" />
+                    <path d="M3 9h18M9 21V9" />
+                  </svg>
+                </div>
+                Detection results will appear here after analysis.
+              </div>
+            </div>
+
+            <button
+              id="download-btn"
+              class="btn btn-download"
+              style="display: none"
+              onclick="downloadResult()"
+            >
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+              >
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="7 10 12 15 17 10" />
+                <line x1="12" y1="3" x2="12" y2="15" />
+              </svg>
+              Download Result
+            </button>
+
+            <div id="detections-list" style="margin-top: 14px"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ADVANCED SETTINGS -->
+      <div class="card">
+        <div class="card-title">
+          <div class="card-title-icon">
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+            >
+              <circle cx="12" cy="12" r="3" />
+              <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
+              <path d="M4.93 4.93a10 10 0 0 0 0 14.14" />
+            </svg>
+          </div>
+          Confidence Thresholds
+        </div>
+        <div class="sliders-grid">
+          <div class="slider-group">
+            <label
+              >32-A Simple
+              <span class="slider-value" id="val-a">0.55</span></label
+            >
+            <input
+              type="range"
+              min="0"
+              max="1"
+              step="0.05"
+              value="0.55"
+              id="conf-a"
+              oninput="
+                document.getElementById('val-a').textContent = parseFloat(
+                  this.value,
+                ).toFixed(2)
+              "
+            />
+            <div class="slider-hint">
+              Confidence required for Simple fracture
+            </div>
+          </div>
+          <div class="slider-group">
+            <label
+              >32-B Wedge
+              <span class="slider-value" id="val-b">0.45</span></label
+            >
+            <input
+              type="range"
+              min="0"
+              max="1"
+              step="0.05"
+              value="0.45"
+              id="conf-b"
+              oninput="
+                document.getElementById('val-b').textContent = parseFloat(
+                  this.value,
+                ).toFixed(2)
+              "
+            />
+            <div class="slider-hint">
+              Confidence required for Wedge fracture
+            </div>
+          </div>
+          <div class="slider-group">
+            <label
+              >32-C Complex
+              <span class="slider-value" id="val-c">0.55</span></label
+            >
+            <input
+              type="range"
+              min="0"
+              max="1"
+              step="0.05"
+              value="0.55"
+              id="conf-c"
+              oninput="
+                document.getElementById('val-c').textContent = parseFloat(
+                  this.value,
+                ).toFixed(2)
+              "
+            />
+            <div class="slider-hint">
+              Confidence required for Complex fracture
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- /main -->
+
+    <!-- FOOTER -->
+    <footer class="footer">
+      <div class="footer-left">
+        <strong>Developed by:</strong> Alvendher Francisco &nbsp;·&nbsp; Mapúa
+        University 2026
+      </div>
+      <div class="tech-pills">
+        <span class="tech-pill">PyTorch</span>
+        <span class="tech-pill">Faster R-CNN</span>
+        <span class="tech-pill">FastAPI</span>
+        <span class="tech-pill">OpenCV</span>
+        <span class="tech-pill">Albumentations</span>
+      </div>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>
